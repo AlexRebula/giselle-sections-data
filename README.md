@@ -1,4 +1,4 @@
-# @alexrebula/giselle-sections-data
+# @alexrebula/giselle-sections-sdk
 
 **A provider-agnostic, typed sections data SDK for React portfolio and product sites.**
 
@@ -37,8 +37,8 @@ First public npm release planned after the portfolio ships. See [ARCHITECTURE.md
 Everything is exported from the root:
 
 ```ts
-import type { HomeItemProps, FAQItemProps, ServicePackageProps } from '@alexrebula/giselle-sections-data';
-import { createDataFactory, mapDataArray, HOME_ITEMS_SAMPLE } from '@alexrebula/giselle-sections-data';
+import type { HomeItemProps, FAQItemProps, ServicePackageProps } from '@alexrebula/giselle-sections-sdk';
+import { createDataFactory, mapDataArray, HOME_ITEMS_SAMPLE } from '@alexrebula/giselle-sections-sdk';
 ```
 
 ---
@@ -46,7 +46,7 @@ import { createDataFactory, mapDataArray, HOME_ITEMS_SAMPLE } from '@alexrebula/
 ## Installation (not yet vailable, but planned upon portfolio publish)
 
 ```bash
-npm install @alexrebula/giselle-sections-data
+npm install @alexrebula/giselle-sections-sdk
 ```
 
 **Peer dependency:** React `^18.0.0 || ^19.0.0` is required. The types use `ReactNode` for rich content fields.
@@ -63,7 +63,7 @@ In your app, write a factory function that returns typed props. The types come f
 
 ```ts
 // your-app/src/sections-api/home/data.ts
-import type { HomeItemProps } from '@alexrebula/giselle-sections-data';
+import type { HomeItemProps } from '@alexrebula/giselle-sections-sdk';
 
 export const createFeatureItems = (): HomeItemProps[] => [
   {
@@ -79,7 +79,7 @@ export const createFeatureItems = (): HomeItemProps[] => [
 
 ```ts
 // your-app/src/sections-api/home/data.ts
-import type { BaseSectionProps, FAQItemProps } from '@alexrebula/giselle-sections-data';
+import type { BaseSectionProps, FAQItemProps } from '@alexrebula/giselle-sections-sdk';
 
 type FaqSectionData = BaseSectionProps & { faqs: FAQItemProps[] };
 
@@ -94,8 +94,8 @@ export const createFaqSectionData = (): FaqSectionData => ({
 ### Using utilities
 
 ```ts
-import { createDataFactory, mapDataArray } from '@alexrebula/giselle-sections-data';
-import type { HomeItemProps } from '@alexrebula/giselle-sections-data';
+import { createDataFactory, mapDataArray } from '@alexrebula/giselle-sections-sdk';
+import type { HomeItemProps } from '@alexrebula/giselle-sections-sdk';
 
 const base: HomeItemProps = { id: 'base', icon: 'solar:star-bold', title: 'Base Item' };
 const item = createDataFactory(base, { title: 'Custom Title' });
@@ -106,7 +106,7 @@ const labels = mapDataArray(items, (item) => item.title);
 ### Using samples in tests
 
 ```ts
-import { HOME_ITEMS_SAMPLE, HOME_TESTIMONIALS_SAMPLE } from '@alexrebula/giselle-sections-data';
+import { HOME_ITEMS_SAMPLE, HOME_TESTIMONIALS_SAMPLE } from '@alexrebula/giselle-sections-sdk';
 
 it('renders all items', () => {
   render(<MySection items={HOME_ITEMS_SAMPLE} />);
@@ -122,7 +122,7 @@ If you are developing this package alongside a consuming app (before publishing 
 
 ```json
 // your-app/package.json
-"@alexrebula/giselle-sections-data": "file:../path/to/giselle-sections-data"
+"@alexrebula/giselle-sections-sdk": "file:../path/to/giselle-sections-sdk"
 ```
 
 Run `npm install` in the consuming app once to create the symlink in `node_modules/`. After that, TypeScript changes in `src/` are picked up immediately — no rebuild needed. Re-run `npm install` only if you change this package's `package.json` (e.g. add a new export entry).
