@@ -6,9 +6,15 @@ This document explains the design thinking behind `@alexrebula/giselle-sections-
 
 ## Why This Is Open Source
 
-Every React project I start from scratch goes through the same bootstrapping work: defining section types, writing the same utility helpers, setting up the same data layer pattern. This package is my attempt to stop doing that work twice. I had this in mind for a long time — and I am now finally doing it.
+Every React project I start from scratch goes through the same bootstrapping work: defining section types, writing the same utility helpers, setting up the same data layer pattern. This package is my attempt to stop doing that work twice.
 
-The immediate goal is selfish — reuse these types and utilities across my own projects without copying files. But the extraction boundary was drawn carefully enough that anyone building a section-based React UI could drop this in and get the same head start. If the package becomes robust enough, I hope someone else benefits from it too.
+But the longer-term goal is a **portfolio platform**: one SDK, N client sites. The vision is that a developer installs this package, wires up their own data provider (PostgreSQL+Apollo, Supabase, Sanity, flat JSON — anything), and their consuming app becomes a **pure renderer** with no hardcoded content and no data logic. New portfolio site = install the package, fill in content, ship.
+
+This requires:
+- `builders/` — generic section builders the consuming app's factories delegate to
+- `providers/` — a typed interface any backend implements to become pluggable
+
+The package is public because none of this logic is personal. The content (names, copy, images, pricing, timeline) always stays in the consuming app's private data layer, or in a private backend the consumer controls.
 
 That is the real reason this is a published package rather than a private utility folder.
 
@@ -56,11 +62,196 @@ const homeView = buildHomeView();
 
 When the time comes to add a CMS, a database, or an API:
 
-1. Factory functions become async adapters
+1. Factory functions become `async` adapters
 2. They fetch from the real source and return the same typed props they return today
 3. **Components are untouched** — they still just receive typed props and render
 
 The data layer is the seam. Change what's behind it without touching what's in front of it.
+
+---
+
+## Platform Roadmap
+
+This package evolves in phases. Each phase is backward-compatible — code written for Phase 1 continues to work in later phases.
+
+### Phase 1 — Now (static factories)
+The consuming app's factory functions return hardcoded typed data. This is the correct interim. Components are already decoupled from content. Package provides `types`, `utils`, and `samples`.
+
+```
+[your-portfolio-app — private]
+  sections-api/
+    home/data.ts      ← static factory, returns typed HomeViewData
+    services/data.ts  ← static factory, returns typed ServicesViewData
+  app/               ← pure renderer
+```
+
+### Phase 2 — Async adapters (post-launch)
+Factory functions become `async` and fetch from a real backend (PostgreSQL via Apollo/GraphQL). Return shapes are identical — zero component changes. Supabase handles authentication for the CMS admin area.
+
+```
+[PostgreSQL + Apollo — private backend]
+  ← all personal content: copy, pricing, images, timeline
+  ← only accessible to the authenticated owner
+
+[your-portfolio-app — private consuming app]
+  sections-api/
+    home/data.ts  ← async Apollo adapter, same return type
+```
+
+### Phase 3 — SDK builders (package extraction)
+Generic builder logic is extracted from consuming app factories into `giselle-sections-data/builders/`. A typed `providers/` interface is added. Any backend that implements the interface becomes pluggable with no SDK changes.
+
+```ts
+// consuming app factory becomes a thin orchestrator
+import { buildServicesPricingSection } from '@alexrebula/giselle-sections-data/builders';
+
+export const createServicesPricingData = async ({ contactHref }) =>
+  buildServicesPricingSection({
+    content: await myProvider.getServicesPricingContent(),
+    params: { contactHref },
+  });
+```
+
+### Phase 4 — CMS admin dashboard
+An authenticated admin area provides a GUI to edit section content, manage images, and preview live — without code deploys.
+
+### Phase 5 — Second client (platform validated)
+A second portfolio site installs `@alexrebula/giselle-sections-data`, implements the provider interface against its own backend, and ships without writing any factory logic. The platform claim is proven.
+
+---
+
+## Provider Interface (planned)
+
+This pattern is directly analogous to how Minimal handles multi-provider auth: one shared `AuthContext` typed with `AuthContextValue`, and separate `AuthProvider` implementations for JWT, Supabase, Firebase, Auth0, and Amplify — all fulfilling the same interface. You swap the provider wrapping the app; nothing inside the app changes.
+
+`giselle-sections-data` will follow the same model for section data.
+
+### Layer 1 — Provider interface (in the SDK)
+
+The SDK defines the shape it needs. No implementation, no backend knowledge:
+
+```ts
+// giselle-sections-data/src/providers/index.ts
+
+export interface HomeViewContent {
+  hero: { name: string; role: string; avatarSrc: string };
+  expertiseAreas: Array<{ id: string; title: string; description: string }>;
+  // ...
+}
+
+export interface ServicesViewContent {
+  plans: Array<{ license: string; price: number; commons: string[]; options: string[] }>;
+  faqItems: Array<{ question: string; paragraphs: string[] }>;
+  // ...
+}
+
+export interface SectionDataProvider {
+  getHomeViewContent(): Promise<HomeViewContent>;
+  getServicesViewContent(): Promise<ServicesViewContent>;
+  // ...
+}
+```
+
+### Layer 2 — Builders (in the SDK)
+
+The SDK owns validation, sanitization, and construction. No hardcoded content:
+
+```ts
+// giselle-sections-data/src/builders/home.ts
+
+export function buildHomeHeroData(
+  content: HomeViewContent['hero'],
+  params: { assetsDir: string; contactHref: string }
+): HomeHeroSectionProps {
+  return {
+    name: content.name,
+    role: content.role,
+    avatar: {
+      src: `${params.assetsDir}${content.avatarSrc}`,
+      alt: content.name,
+    },
+    contactHref: sanitizeCtaHref(params.contactHref, '/contact-us'),
+  };
+}
+```
+
+### Layer 3 — Client factory (in the SDK)
+
+The SDK wires provider → builders. The consuming app calls this once with its own provider:
+
+```ts
+// giselle-sections-data/src/client.ts
+
+import type { SectionDataProvider } from './providers';
+import { buildHomeHeroData } from './builders/home';
+import { buildServicesViewData } from './builders/services';
+
+export function createSectionsClient(provider: SectionDataProvider) {
+  return {
+    async getHomeViewData(params: { assetsDir: string; contactHref: string }) {
+      const content = await provider.getHomeViewContent();
+      return {
+        hero: buildHomeHeroData(content.hero, params),
+        // ...
+      };
+    },
+    async getServicesViewData(params: ServicesViewParams) {
+      const content = await provider.getServicesViewContent();
+      return buildServicesViewData(content, params);
+    },
+  };
+}
+```
+
+### The consuming app's private provider (never in the SDK)
+
+The consuming app implements the `SectionDataProvider` interface against its own backend. The SDK never sees credentials, queries, or schema:
+
+```ts
+// your-portfolio-app/src/providers/apollo-provider.ts  ← PRIVATE
+
+import type { SectionDataProvider, HomeViewContent } from '@alexrebula/giselle-sections-data';
+
+export class ApolloSectionsProvider implements SectionDataProvider {
+  constructor(private client: ApolloClient<unknown>) {}
+
+  async getHomeViewContent(): Promise<HomeViewContent> {
+    const { data } = await this.client.query({ query: GET_HOME_CONTENT });
+    return data.homeContent; // your DB schema, your GraphQL query — SDK never sees it
+  }
+}
+```
+
+A Supabase implementation of the same interface would look identical in structure — just a different fetch mechanism:
+
+```ts
+// your-portfolio-app/src/providers/supabase-provider.ts  ← PRIVATE
+
+export class SupabaseSectionsProvider implements SectionDataProvider {
+  async getHomeViewContent(): Promise<HomeViewContent> {
+    const { data } = await supabase.from('home_content').select('*').single();
+    return data;
+  }
+}
+```
+
+### Wiring it up in the consuming app
+
+```ts
+// your-portfolio-app/src/sections-api/client.ts
+
+import { createSectionsClient } from '@alexrebula/giselle-sections-data';
+import { ApolloSectionsProvider } from '../providers/apollo-provider';
+
+const client = createSectionsClient(new ApolloSectionsProvider(apolloClient));
+
+export const getHomeViewData = (params) => client.getHomeViewData(params);
+export const getServicesViewData = (params) => client.getServicesViewData(params);
+```
+
+Swap `ApolloSectionsProvider` for `SupabaseSectionsProvider` and the rest of the app is untouched — same as swapping `<AuthProvider>` in Minimal.
+
+The consuming app's backend credentials and content schema stay entirely private. The SDK never sees them.
 
 ---
 

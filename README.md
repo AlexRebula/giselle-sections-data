@@ -1,30 +1,38 @@
 # @alexrebula/giselle-sections-data
 
-**TypeScript types, utility helpers, and sample data for React section-based UIs.**
+**A provider-agnostic, typed sections data SDK for React portfolio and product sites.**
 
-This package is the reusable core extracted from the `sections-api` data layer pattern, originally used in my portfolio website, currently being built. Its goal is to provide the type contracts, pure utility functions, and generic sample data that any React project can use to build a clean, typed data layer — without any personal content or presentation logic.
+This package is the reusable public core of the `sections-api` pattern — a data layer architecture that separates typed section contracts from personal content and backend implementation. The long-term goal is a **headless CMS SDK**: install this package, wire up your own data provider (PostgreSQL+Apollo, Supabase, Sanity, flat JSON — anything), and your consuming app becomes a pure renderer with no hardcoded content.
 
-No JSX. No MUI. No hardcoded content. Just types, utilities, and samples.
+No JSX. No MUI. No personal content. Just types, builders, utilities, and samples.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for the design rationale behind this package and the `sections-api` pattern it supports.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full design rationale, platform vision, and phase roadmap.
 
 ---
 
 ## Status
 
-**In active development — `v0.1.0`**
+**Phase 1 — `v0.1.0` (active development)**
 
-Will be used in production by the Alex Rebula portfolio website when published. First public npm release planned after the portfolio ships.
+Currently shipping `types`, `utils`, and `samples`. The reference portfolio implementation uses static factory functions today — this is the correct interim before a real backend is wired up.
+
+**Planned for later phases:**
+- `builders/` — generic section builder functions, no hardcoded strings; consuming app factories call builders and pass their own content
+- `providers/` — typed provider interface; any backend (Apollo/GraphQL, Supabase, Sanity, flat JSON) implements it and becomes pluggable
+
+First public npm release planned after the portfolio ships. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full phase roadmap.
 
 ---
 
 ## What's in the box
 
-| Module      | Contents                                                                                                          |
-| ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| `types`     | All shared TypeScript interfaces — `BaseSectionProps`, `HomeItemProps`, `TestimonialItemProps`, `FAQItemProps`, `ServicePackageProps`, `DashboardPreviewContentConfig`, and more |
-| `utils`     | Pure, stateless helpers — `createDataFactory`, `mapDataArray`, `filterDataArray`, `createFaqToolButtons`         |
-| `samples`   | Generic placeholder data for tests and Storybook — `HOME_ITEMS_SAMPLE`, `HOME_TESTIMONIALS_SAMPLE`, `HOME_FAQS_SAMPLE`, and more |
+| Module        | Status    | Contents                                                                                                          |
+| ------------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `types`       | ✅ Now    | All shared TypeScript interfaces — `BaseSectionProps`, `HomeItemProps`, `TestimonialItemProps`, `FAQItemProps`, `ServicePackageProps`, `DashboardPreviewContentConfig`, and more |
+| `utils`       | ✅ Now    | Pure, stateless helpers — `createDataFactory`, `mapDataArray`, `filterDataArray`, `createFaqToolButtons`         |
+| `samples`     | ✅ Now    | Generic placeholder data for tests and Storybook — `HOME_ITEMS_SAMPLE`, `HOME_TESTIMONIALS_SAMPLE`, `HOME_FAQS_SAMPLE`, and more |
+| `builders`    | 🔜 Planned | Generic section builder functions — take typed content + params, return typed section props; no hardcoded strings |
+| `providers`   | 🔜 Planned | Typed provider interface — any backend (Apollo, Supabase, Sanity, JSON) can implement it and become pluggable    |
 
 Everything is exported from the root:
 
@@ -145,9 +153,9 @@ DTS  dist/index.d.ts    ~9.4 KB
 - **No MUI.** The consuming app extends these types with `sx: SxProps<Theme>` where needed. MUI stays an app-level concern.
 - **No personal content.** Domain data factories (`home/data.tsx`, `about/data.ts`, etc.) contain real personal content and live in the consuming app only.
 - **Single extraction boundary.** If someone else dropped this package into their project, none of my personal data would appear. Types are shapes; utils are pure functions; samples use placeholder text.
+- **Provider-agnostic by design.** When `providers/` lands, any backend that implements the typed provider interface becomes a drop-in data source — no SDK changes required.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full rationale.
-Tools for easy migration to real backend data sources
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full rationale and platform roadmap.
 
 ```bash
 npm install
