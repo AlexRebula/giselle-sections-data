@@ -1,6 +1,6 @@
 # Architecture: The `sections-api` Pattern and Why This Package Exists
 
-This document explains the design thinking behind `@alexrebula/giselle-sections-data` — what problem it solves, how the data layer pattern works, and why the extraction boundary sits where it does.
+This document explains the design thinking behind `@alexrebula/giselle-sections-sdk` — what problem it solves, how the data layer pattern works, and why the extraction boundary sits where it does.
 
 ---
 
@@ -99,11 +99,11 @@ Factory functions become `async` and fetch from a real backend (PostgreSQL via A
 ```
 
 ### Phase 3 — SDK builders (package extraction)
-Generic builder logic is extracted from consuming app factories into `giselle-sections-data/builders/`. A typed `providers/` interface is added. Any backend that implements the interface becomes pluggable with no SDK changes.
+Generic builder logic is extracted from consuming app factories into `giselle-sections-sdk/builders/`. A typed `providers/` interface is added. Any backend that implements the interface becomes pluggable with no SDK changes.
 
 ```ts
 // consuming app factory becomes a thin orchestrator
-import { buildServicesPricingSection } from '@alexrebula/giselle-sections-data/builders';
+import { buildServicesPricingSection } from '@alexrebula/giselle-sections-sdk/builders';
 
 export const createServicesPricingData = async ({ contactHref }) =>
   buildServicesPricingSection({
@@ -116,7 +116,7 @@ export const createServicesPricingData = async ({ contactHref }) =>
 An authenticated admin area provides a GUI to edit section content, manage images, and preview live — without code deploys.
 
 ### Phase 5 — Second client (platform validated)
-A second portfolio site installs `@alexrebula/giselle-sections-data`, implements the provider interface against its own backend, and ships without writing any factory logic. The platform claim is proven.
+A second portfolio site installs `@alexrebula/giselle-sections-sdk`, implements the provider interface against its own backend, and ships without writing any factory logic. The platform claim is proven.
 
 ---
 
@@ -124,14 +124,14 @@ A second portfolio site installs `@alexrebula/giselle-sections-data`, implements
 
 This pattern is directly analogous to how Minimal handles multi-provider auth: one shared `AuthContext` typed with `AuthContextValue`, and separate `AuthProvider` implementations for JWT, Supabase, Firebase, Auth0, and Amplify — all fulfilling the same interface. You swap the provider wrapping the app; nothing inside the app changes.
 
-`giselle-sections-data` will follow the same model for section data.
+`giselle-sections-sdk` will follow the same model for section data.
 
 ### Layer 1 — Provider interface (in the SDK)
 
 The SDK defines the shape it needs. No implementation, no backend knowledge:
 
 ```ts
-// giselle-sections-data/src/providers/index.ts
+// giselle-sections-sdk/src/providers/index.ts
 
 export interface HomeViewContent {
   hero: { name: string; role: string; avatarSrc: string };
@@ -157,7 +157,7 @@ export interface SectionDataProvider {
 The SDK owns validation, sanitization, and construction. No hardcoded content:
 
 ```ts
-// giselle-sections-data/src/builders/home.ts
+// giselle-sections-sdk/src/builders/home.ts
 
 export function buildHomeHeroData(
   content: HomeViewContent['hero'],
@@ -180,7 +180,7 @@ export function buildHomeHeroData(
 The SDK wires provider → builders. The consuming app calls this once with its own provider:
 
 ```ts
-// giselle-sections-data/src/client.ts
+// giselle-sections-sdk/src/client.ts
 
 import type { SectionDataProvider } from './providers';
 import { buildHomeHeroData } from './builders/home';
@@ -210,7 +210,7 @@ The consuming app implements the `SectionDataProvider` interface against its own
 ```ts
 // your-portfolio-app/src/providers/apollo-provider.ts  ← PRIVATE
 
-import type { SectionDataProvider, HomeViewContent } from '@alexrebula/giselle-sections-data';
+import type { SectionDataProvider, HomeViewContent } from '@alexrebula/giselle-sections-sdk';
 
 export class ApolloSectionsProvider implements SectionDataProvider {
   constructor(private client: ApolloClient<unknown>) {}
@@ -240,7 +240,7 @@ export class SupabaseSectionsProvider implements SectionDataProvider {
 ```ts
 // your-portfolio-app/src/sections-api/client.ts
 
-import { createSectionsClient } from '@alexrebula/giselle-sections-data';
+import { createSectionsClient } from '@alexrebula/giselle-sections-sdk';
 import { ApolloSectionsProvider } from '../providers/apollo-provider';
 
 const client = createSectionsClient(new ApolloSectionsProvider(apolloClient));
@@ -345,7 +345,7 @@ During development, before the package is published to npm, the consuming app re
 
 ```json
 // consuming-app/package.json
-"@alexrebula/giselle-sections-data": "file:../../../giselle-sections-data"
+"@alexrebula/giselle-sections-sdk": "file:../../../giselle-sections-sdk"
 ```
 
 After any changes to the package, run `npm install` in the consuming app to re-link. `npm run build` in the package is not required for the type-check step (TypeScript resolves from `src/` via the local symlink), but is required for the published dist output.
@@ -369,7 +369,7 @@ import type {
   DashboardPreviewContentConfig,
   DashboardPreviewVisualConfig,
   SectionPreviewConfig,
-} from '@alexrebula/giselle-sections-data';
+} from '@alexrebula/giselle-sections-sdk';
 
 export type { DashboardPreviewContentConfig, DashboardPreviewVisualConfig, SectionPreviewConfig };
 ```
