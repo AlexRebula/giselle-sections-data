@@ -23,18 +23,20 @@ It is designed as a single source of truth for all sections and components, maki
 npm install @alexrebula/giselle-sections-data
 ```
 
-```typescript
+### Usage Example
+
+```TypeScript
 import { 
   createHomeHeroData, 
   createExpertiseAreasData, 
   createServicePackagesData 
 } from '@alexrebula/giselle-sections-data';
 
-
 const hero = createHomeHeroData();
 const expertise = createExpertiseAreasData();
 const services = createServicePackagesData();
 ```
+
 ### Vision
 
 giselle-sections-data separates data from presentation.
@@ -43,12 +45,10 @@ It is the foundation of the Giselle UI ecosystem and can be used independently i
 
 ### Roadmap
 
-- Expand factory coverage with more complex section patterns
-- Add comprehensive examples and documentation
-- Support for additional frameworks (Angular and Vue planned)
-- Tools for easy migration to real backend data sources
-
-### Development 
+Expand factory coverage with more complex section patterns
+Add comprehensive examples and documentation
+Support for additional frameworks (Angular and Vue planned)
+Tools for easy migration to real backend data sources
 
 ```bash
 npm install
@@ -58,7 +58,6 @@ npm test
 ```
 
 ### License
-
 MIT
 
 Made with ❤️ by Alex Rebula
