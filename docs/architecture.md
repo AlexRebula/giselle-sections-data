@@ -1,3 +1,8 @@
+---
+sidebar_position: 2
+sidebar_label: 'Architecture'
+---
+
 # Architecture: The `sections-api` Pattern and Why This Package Exists
 
 This document explains the design thinking behind `@alexrebula/giselle-sections-sdk` — what problem it solves, how the data layer pattern works, and why the extraction boundary sits where it does.
