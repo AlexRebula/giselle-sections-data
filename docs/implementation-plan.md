@@ -1,3 +1,8 @@
+---
+sidebar_position: 3
+sidebar_label: 'Implementation Plan'
+---
+
 # `@alexrebula/giselle-sections-sdk` — Implementation Plan
 
 Full from-scratch-to-platform build checklist. Each phase is backward-compatible with the previous one. No phase requires tearing down what came before.

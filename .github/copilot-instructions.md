@@ -44,8 +44,8 @@ At the start of every new Copilot session in this package, read these files:
 
 | File | Purpose |
 |------|---------|
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Design rationale: the sections-api pattern, why this is open-source, provider model, migration path |
-| [`IMPLEMENTATION_PLAN.md`](../IMPLEMENTATION_PLAN.md) | Per-phase task checklist with `[x]` / `[ ]` status |
+| [`docs/architecture.md`](../docs/architecture.md) | Design rationale: the sections-api pattern, why this is open-source, provider model, migration path |
+| [`docs/implementation-plan.md`](../docs/implementation-plan.md) | Per-phase task checklist with `[x]` / `[ ]` status |
 
 ### Current status
 

@@ -8,7 +8,7 @@ No JSX. No MUI. No personal content. Just types, builders, utilities, and sample
 
 > **License independence (MIT):** This package has no UI framework dependency — it is a pure data layer (types, utilities, and samples) designed to work with any React stack. This is an architectural decision: keeping the SDK framework-agnostic means consumers can use MUI, Tailwind, or anything else without coupling. No code has been copied or derived from any proprietary theme or kit. See [LICENSE](./LICENSE).
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full design rationale, platform vision, and phase roadmap.
+See [docs/architecture.md](./docs/architecture.md) for the full design rationale, platform vision, and phase roadmap.
 
 ---
 
@@ -22,7 +22,7 @@ Currently shipping `types`, `utils`, and `samples`. The reference portfolio impl
 - `builders/` — generic section builder functions, no hardcoded strings; consuming app factories call builders and pass their own content
 - `providers/` — typed provider interface; any backend (Apollo/GraphQL, Supabase, Sanity, flat JSON) implements it and becomes pluggable
 
-First public npm release planned after the portfolio ships. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full phase roadmap.
+First public npm release planned after the portfolio ships. See [docs/architecture.md](./docs/architecture.md) for the full phase roadmap.
 
 **The test suite will receive a full review and overhaul before the first npm publish.**
 No package ships to npm until the tests meet the same standard as the implementation.
@@ -48,7 +48,7 @@ import { createDataFactory, mapDataArray, HOME_ITEMS_SAMPLE } from '@alexrebula/
 
 ---
 
-## Installation (not yet vailable, but planned upon portfolio publish)
+## Installation (not yet available, but planned upon portfolio publish)
 
 ```bash
 npm install @alexrebula/giselle-sections-sdk
@@ -142,36 +142,17 @@ npm run typecheck   # tsc --noEmit
 npm run test        # vitest run
 ```
 
-Build output:
-
-```
-ESM  dist/index.js      ~2.2 KB
-CJS  dist/index.cjs     ~3.7 KB
-DTS  dist/index.d.ts    ~9.4 KB
-```
-
 ---
 
 ## Design decisions
 
 - **React-first.** Types use `ReactNode` for rich content fields. React is declared as a peer dependency. No JSX in the package — just types compatible with React props.
 - **No MUI.** The consuming app extends these types with `sx: SxProps<Theme>` where needed. MUI stays an app-level concern.
-- **No personal content.** Domain data factories (`home/data.tsx`, `about/data.ts`, etc.) contain real personal content and live in the consuming app only.
-- **Single extraction boundary.** If someone else dropped this package into their project, none of my personal data would appear. Types are shapes; utils are pure functions; samples use placeholder text.
+- **No personal content.** Domain data factories contain real personal content and live in the consuming app only.
+- **Single extraction boundary.** Types are shapes; utils are pure functions; samples use placeholder text.
 - **Provider-agnostic by design.** When `providers/` lands, any backend that implements the typed provider interface becomes a drop-in data source — no SDK changes required.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full rationale and platform roadmap.
-
-```bash
-npm install
-npm run typecheck
-npm run build
-npm test
-```
+See [docs/architecture.md](./docs/architecture.md) for the full rationale and platform roadmap.
 
 ### License
 MIT
-
----
-
-Made with ❤️ by [Alex Rebula](https://github.com/AlexRebula)
