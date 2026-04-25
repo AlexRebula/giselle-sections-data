@@ -6,6 +6,8 @@ This package is the reusable public core of the `sections-api` pattern — a dat
 
 No JSX. No MUI. No personal content. Just types, builders, utilities, and samples.
 
+> **License independence (MIT):** This package has no UI framework dependency — it is a pure data layer (types, utilities, and samples) designed to work with any React stack. This is an architectural decision: keeping the SDK framework-agnostic means consumers can use MUI, Tailwind, or anything else without coupling. No code has been copied or derived from any proprietary theme or kit. See [LICENSE](./LICENSE).
+
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full design rationale, platform vision, and phase roadmap.
 
 ---
@@ -21,6 +23,9 @@ Currently shipping `types`, `utils`, and `samples`. The reference portfolio impl
 - `providers/` — typed provider interface; any backend (Apollo/GraphQL, Supabase, Sanity, flat JSON) implements it and becomes pluggable
 
 First public npm release planned after the portfolio ships. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full phase roadmap.
+
+**The test suite will receive a full review and overhaul before the first npm publish.**
+No package ships to npm until the tests meet the same standard as the implementation.
 
 ---
 
@@ -167,4 +172,6 @@ npm test
 ### License
 MIT
 
-Made with ❤️ by Alex Rebula
+---
+
+Made with ❤️ by [Alex Rebula](https://github.com/AlexRebula)
