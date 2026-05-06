@@ -17,7 +17,7 @@ Full from-scratch-to-platform build checklist. Each phase is backward-compatible
 
 ---
 
-## Phase 0 — Package Skeleton
+## Phase 0 — Package Skeleton — Infrastructure & Quality
 
 Initial repo, build tooling, and quality gates.
 
@@ -39,7 +39,7 @@ Initial repo, build tooling, and quality gates.
 
 ---
 
-## Phase 1 — Types, Utils, Samples ✅
+## Phase 1 — Types, Utils, Samples — SDK Core [-]
 
 Pure, no-runtime data contracts and helpers. Currently active.
 
@@ -115,7 +115,7 @@ Pure, no-runtime data contracts and helpers. Currently active.
 
 ---
 
-## Phase 2 — Async Adapters (Consuming App)
+## Phase 2 — Async Adapters — SDK Core (Consuming App)
 
 No SDK changes — this phase happens in the **consuming app** (`alexrebula`). SDK surface is stable.
 
@@ -149,7 +149,7 @@ No SDK changes — this phase happens in the **consuming app** (`alexrebula`). S
 
 ---
 
-## Phase 3 — SDK Builders & Provider Interface
+## Phase 3 — SDK Builders & Provider Interface — SDK Core
 
 Builder logic extracted from consuming app into the SDK. Typed provider interface added.
 
@@ -246,7 +246,7 @@ One builder file per page domain. No backend knowledge, no credentials, no hardc
 
 ---
 
-## Phase 4 — CMS Admin Dashboard
+## Phase 4 — CMS Admin Dashboard — Infrastructure & Quality
 
 Authenticated GUI for content owners to edit section content without code deploys.
 
@@ -268,7 +268,7 @@ Authenticated GUI for content owners to edit section content without code deploy
 
 ---
 
-## Phase 5 — Multi-Client Platform
+## Phase 5 — Multi-Client Platform — SDK Core
 
 Second portfolio site proves the platform claim. No SDK modifications required.
 

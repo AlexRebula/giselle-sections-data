@@ -38,6 +38,20 @@ No JSX. No MUI. No personal content. Just types, builders, utilities, and sample
 - tsup for building (ESM + CJS)
 - No runtime UI framework dependency — consumers bring their own
 
+## Brand identity — the Giselle mango tree
+
+The Giselle ecosystem is named after the Filipino wife of the author. The Philippine national fruit is the Carabao mango — both the logo mark and the ecosystem metaphor.
+
+- **The tree** = shared foundation: typed data contracts, TypeScript conventions, test discipline
+- **Each branch** = a package (`giselle-mui`, `giselle-sections-sdk`, `giselle-ui`, `giselle-docs`)
+- **Each mango** = a release at its own ripeness stage
+
+Ripeness scale: 🟢 green = alpha · 🟡 yellow-green = beta · 🟠 golden = stable · 🟤 amber = LTS
+
+`giselle-sections-sdk` is the **green mango** — deepest root, functional but evolving fast. Framework-agnostic data layer.
+
+**WC-6:** The planned wide hero illustration — watercolour mango tree with per-package label badges. See `alexrebula/docs/brand/logo-concept.md` Track A.
+
 ## Session bootstrap: where Copilot should look first
 
 At the start of every new Copilot session in this package, read these files:
@@ -67,3 +81,18 @@ At the start of every new Copilot session in this package, read these files:
 - Pure utility functions with Vitest unit tests
 - Generic sample data objects for each section type
 - `IMPLEMENTATION_PLAN.md` updates when tasks are completed
+
+---
+
+## Contributor profiles — code review tone
+
+This repository welcomes contributors at all experience levels. When reviewing any PR:
+
+- **Hold the same quality standard regardless of contributor experience.** Do not lower the bar — explain what needs to change and why, just as you would for any contributor.
+- **Explain the why, not just the what.** Do not say "use `const` here"; say "use `const` here because this value never changes — it signals to anyone reading the code that this was intentional, not a mistake."
+- **One issue per comment.** Do not stack multiple changes into one comment.
+- **Acknowledge what is correct before noting what to improve.**
+- **When something is wrong, show what correct looks like** — not just "this is wrong"; show the fixed version and explain why it is better.
+- **Four sentences max per comment.** Link to MDN or the repo README instead of writing a lecture inline.
+- **No jargon without a definition.** If a term like "idempotent", "side effect", or "type assertion" appears in a comment, define it in the same sentence.
+- **Do not ask for perfection.** If the code is correct, passes the quality gate, and solves the problem — it ships. Encourage, merge, move on.
