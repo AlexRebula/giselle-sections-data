@@ -36,6 +36,7 @@ Initial repo, build tooling, and quality gates.
 - [ ] Set up `__tests__/` convention and add a smoke test that the package imports cleanly
 - [ ] Add GitHub Actions CI: `typecheck` + `test` on push/PR
 - [ ] Add `.npmignore` (exclude `src/`, `__tests__/`, config files from published package)
+- [x] Add PR template (`.github/pull_request_template.md`) — What / Why / Type / Checklist / Notes — 9 May 2026
 
 ---
 
